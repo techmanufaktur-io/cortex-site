@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title data-i18n="meta.title">Cortex — The clipboard manager that understands what you copy</title>
+<meta name="description" data-i18n-content="meta.desc" content="Cortex captures everything you copy, organizes it into groups, and understands it with on-device Apple Intelligence. Private by design. Keyboard-first.">
+<meta property="og:title" content="Cortex — Your clipboard, with a brain">
+<meta property="og:description" content="A keyboard-first clipboard manager for macOS with on-device AI. Private by design.">
+<meta property="og:image" content="assets/hero-main.png">
+<meta property="og:type" content="website">
+<link rel="icon" type="image/png" href="assets/favicon.png">
+<link rel="apple-touch-icon" href="assets/icon.png">
+<style>
+  :root {
+    --ink: #1d1c1d;
+    --ink-soft: #454245;
+    --ink-faint: #696469;
+    --paper: #ffffff;
+    --paper-warm: #f8f7f8;
+    --brand: #4a154b;
+    --brand-bright: #7c3aed;
+    --blue: #2f7de1;
+    --teal: #0e9888;
+    --green: #2eb67d;
+    --yellow: #ecb22e;
+    --red: #e01e5a;
+    --radius: 14px;
+    --shadow-lg: 0 24px 80px rgba(29,28,29,.18), 0 4px 16px rgba(29,28,29,.08);
+    --shadow-sm: 0 2px 10px rgba(29,28,29,.08);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; overflow-x: clip; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    color: var(--ink);
+    background: var(--paper);
+    -webkit-font-smoothing: antialiased;
+    line-height: 1.55;
+  }
+  img { max-width: 100%; height: auto; display: block; }
+  a { color: var(--brand-bright); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  .wrap { max-width: 1120px; margin: 0 auto; padding: 0 24px; }
+
+  nav {
+    position: sticky; top: 0; z-index: 50;
+    background: rgba(255,255,255,.86);
+    backdrop-filter: saturate(180%) blur(14px);
+    border-bottom: 1px solid rgba(29,28,29,.07);
+  }
+  .nav-inner { display: flex; align-items: center; gap: 24px; height: 64px; }
+  .logo { display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 20px; letter-spacing: -.02em; color: var(--ink); }
+  .logo:hover { text-decoration: none; }
+  .logo-mark { width: 32px; height: 32px; border-radius: 8px; }
+  .nav-links { display: flex; gap: 22px; margin-left: auto; align-items: center; }
+  .nav-links a { color: var(--ink-soft); font-weight: 600; font-size: 15px; }
+  .nav-links a:hover { color: var(--ink); text-decoration: none; }
+  @media (max-width: 640px) {
+    .nav-links { gap: 12px; }
+    .nav-links a:not(.btn) { display: none; }
+  }
+  .lang-picker {
+    appearance: none; -webkit-appearance: none;
+    font: inherit; font-weight: 600; font-size: 14px; color: var(--ink-soft);
+    background: var(--paper-warm) url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="10" height="6" viewBox="0 0 10 6"><path d="M1 1l4 4 4-4" stroke="%23696469" stroke-width="1.6" fill="none" stroke-linecap="round"/></svg>') no-repeat right 10px center;
+    border: 1px solid rgba(29,28,29,.14); border-radius: 9px;
+    padding: 7px 28px 7px 12px; cursor: pointer;
+  }
+  .btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: var(--brand); color: #fff !important;
+    padding: 11px 22px; border-radius: 10px;
+    font-weight: 700; font-size: 15px; letter-spacing: .01em;
+    transition: transform .12s ease, box-shadow .12s ease, background .12s ease;
+    box-shadow: var(--shadow-sm);
+  }
+  .btn:hover { background: #5b1a5c; transform: translateY(-1px); text-decoration: none; box-shadow: 0 6px 20px rgba(74,21,75,.3); }
+  .btn.big { padding: 15px 30px; font-size: 17px; border-radius: 12px; }
+  .btn.ghost { background: transparent; color: var(--ink) !important; border: 2px solid rgba(29,28,29,.18); box-shadow: none; }
+  .btn.ghost:hover { background: var(--paper-warm); border-color: rgba(29,28,29,.32); }
+
+  header.hero { padding: 96px 0 0; text-align: center; overflow: hidden; }
+  .eyebrow {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-size: 13.5px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase;
+    color: var(--brand-bright); background: rgba(124,58,237,.09);
+    padding: 7px 14px; border-radius: 100px; margin-bottom: 26px;
+  }
+  h1, h2 {
+    overflow-wrap: break-word; hyphens: auto;
+    -webkit-hyphenate-limit-before: 5; -webkit-hyphenate-limit-after: 5;
+    hyphenate-limit-chars: 12 5 5;
+  }
+  h1 {
+    font-size: clamp(42px, 7vw, 76px);
+    font-weight: 800; letter-spacing: -.035em; line-height: 1.03;
+    max-width: 880px; margin: 0 auto 24px;
+  }
+  h1 .accent { color: var(--brand-bright); }
+  .sub {
+    font-size: clamp(18px, 2.4vw, 22px); color: var(--ink-soft);
+    max-width: 640px; margin: 0 auto 36px; line-height: 1.5; font-weight: 450;
+  }
+  .cta-row { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; margin-bottom: 14px; }
+  .fineprint { font-size: 13.5px; color: var(--ink-faint); margin-bottom: 64px; }
+  .hero-shot { max-width: 1060px; margin: 0 auto -80px; position: relative; }
+  .hero-shot img { border-radius: var(--radius); box-shadow: var(--shadow-lg); border: 1px solid rgba(29,28,29,.08); }
+  .hero-bg { background: linear-gradient(180deg, #fff 0%, #faf7fc 55%, #f3ecf7 100%); padding-bottom: 140px; }
+
+  .keys-strip { padding: 150px 0 20px; text-align: center; }
+  .keys-strip p { color: var(--ink-faint); font-weight: 600; font-size: 14px; letter-spacing: .05em; text-transform: uppercase; margin-bottom: 18px; }
+  .keys { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+  kbd {
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    background: var(--paper-warm); border: 1px solid rgba(29,28,29,.12);
+    border-bottom-width: 2.5px; border-radius: 8px;
+    padding: 6px 12px; font-size: 14px; font-weight: 700; color: var(--ink);
+  }
+  .keys span { color: var(--ink-faint); font-size: 14px; align-self: center; margin-right: 12px; }
+
+  section { padding: 88px 0; }
+  section.warm { background: var(--paper-warm); }
+  .section-head { text-align: center; max-width: 720px; margin: 0 auto 56px; }
+  h2 { font-size: clamp(30px, 4.4vw, 44px); font-weight: 800; letter-spacing: -.03em; line-height: 1.12; margin-bottom: 14px; }
+  .section-head p { font-size: 18px; color: var(--ink-soft); }
+
+  .feature-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }
+  @media (max-width: 880px) { .feature-grid { grid-template-columns: 1fr; } }
+  .card {
+    background: #fff; border: 1px solid rgba(29,28,29,.08);
+    border-radius: var(--radius); padding: 28px; box-shadow: var(--shadow-sm);
+  }
+  .card .icon {
+    width: 44px; height: 44px; border-radius: 12px; display: grid; place-items: center;
+    font-size: 21px; margin-bottom: 16px; color: #fff;
+  }
+  .card h3 { font-size: 19px; font-weight: 750; letter-spacing: -.015em; margin-bottom: 8px; }
+  .card p { font-size: 15.5px; color: var(--ink-soft); }
+  .i-blue { background: var(--blue); } .i-teal { background: var(--teal); }
+  .i-green { background: var(--green); } .i-purple { background: var(--brand-bright); }
+  .i-yellow { background: var(--yellow); } .i-red { background: var(--red); }
+
+  .split { display: grid; grid-template-columns: 1fr 1.15fr; gap: 64px; align-items: center; }
+  .split > * { min-width: 0; }
+  .split.flip { grid-template-columns: 1.15fr 1fr; }
+  @media (max-width: 880px) { .split, .split.flip { grid-template-columns: 1fr; gap: 32px; } }
+  .split img { border-radius: var(--radius); box-shadow: var(--shadow-lg); border: 1px solid rgba(29,28,29,.08); }
+  .split h2 { text-align: left; }
+  .split .lead { font-size: 17.5px; color: var(--ink-soft); margin-bottom: 22px; }
+  .ticks { list-style: none; }
+  .ticks li { padding-left: 32px; position: relative; margin-bottom: 13px; font-size: 16px; color: var(--ink-soft); }
+  .ticks li strong { color: var(--ink); font-weight: 700; }
+  .ticks li::before {
+    content: "✓"; position: absolute; left: 0; top: -1px;
+    width: 22px; height: 22px; border-radius: 7px; background: rgba(46,182,125,.14);
+    color: var(--green); font-weight: 800; font-size: 13px;
+    display: grid; place-items: center;
+  }
+
+  .privacy {
+    background: linear-gradient(135deg, var(--brand) 0%, #2e0a30 100%);
+    color: #fff; border-radius: 22px; padding: 64px 56px;
+    display: grid; grid-template-columns: 1.2fr 1fr; gap: 48px; align-items: center;
+  }
+  @media (max-width: 880px) { .privacy { grid-template-columns: 1fr; padding: 40px 28px; } }
+  .privacy h2 { color: #fff; text-align: left; }
+  .privacy p { color: rgba(255,255,255,.78); font-size: 17px; }
+  .privacy .ticks li { color: rgba(255,255,255,.85); }
+  .privacy .ticks li strong { color: #fff; }
+  .privacy .ticks li::before { background: rgba(255,255,255,.16); color: #7ee2ac; }
+  .privacy .policy-link { color: #d8b9ff; font-weight: 650; font-size: 15.5px; }
+  .privacy .policy-link:hover { color: #fff; }
+
+  /* Team / Trust */
+  .team-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 26px; max-width: 860px; margin: 0 auto; }
+  @media (max-width: 720px) { .team-grid { grid-template-columns: minmax(0, 1fr); } }
+  .person {
+    background: #fff; border: 1px solid rgba(29,28,29,.08); border-radius: var(--radius);
+    padding: 30px; box-shadow: var(--shadow-sm); display: flex; gap: 22px; align-items: flex-start;
+  }
+  .person > div { min-width: 0; overflow-wrap: break-word; }
+  .person img {
+    width: 96px; height: 96px; border-radius: 50%; object-fit: cover; flex-shrink: 0;
+    border: 3px solid #fff; box-shadow: 0 4px 16px rgba(29,28,29,.16);
+  }
+  .person h3 { font-size: 19px; font-weight: 750; letter-spacing: -.015em; }
+  .person .role { color: var(--brand-bright); font-weight: 650; font-size: 14px; margin-bottom: 8px; }
+  .person p { font-size: 15px; color: var(--ink-soft); }
+  .person a { font-weight: 600; font-size: 14px; }
+  .team-note {
+    text-align: center; max-width: 620px; margin: 40px auto 0;
+    font-size: 16px; color: var(--ink-soft); font-style: italic;
+  }
+
+  details { border-bottom: 1px solid rgba(29,28,29,.1); padding: 20px 4px; }
+  details summary {
+    font-weight: 700; font-size: 17px; cursor: pointer; list-style: none;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  details summary::after { content: "+"; font-size: 22px; color: var(--ink-faint); font-weight: 400; }
+  details[open] summary::after { content: "–"; }
+  details p { padding-top: 12px; color: var(--ink-soft); font-size: 15.5px; max-width: 780px; }
+  .faq-wrap { max-width: 820px; margin: 0 auto; }
+
+  .final { text-align: center; padding: 110px 0; }
+  .final h2 { margin-bottom: 12px; }
+  .final p { color: var(--ink-soft); font-size: 18px; margin-bottom: 32px; }
+
+  footer { border-top: 1px solid rgba(29,28,29,.08); padding: 36px 0; }
+  .foot { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; color: var(--ink-faint); font-size: 14px; }
+  .foot a { color: var(--ink-faint); }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap nav-inner">
+    <a class="logo" href="#"><img class="logo-mark" src="assets/icon.png" alt="" width="32" height="32">Cortex</a>
+    <div class="nav-links">
+      <a href="#features" data-i18n="nav.features">Features</a>
+      <a href="#ai" data-i18n="nav.ai">AI</a>
+      <a href="#team" data-i18n="nav.team">Team</a>
+      <a href="#faq">FAQ</a>
+      <select class="lang-picker" id="langPicker" aria-label="Language">
+        <option value="en">EN</option>
+        <option value="de">DE</option>
+        <option value="fr">FR</option>
+        <option value="es">ES</option>
+        <option value="it">IT</option>
+        <option value="nl">NL</option>
+      </select>
+      <a class="btn" href="#download" data-i18n="nav.download">Download</a>
+    </div>
+  </div>
+</nav>
+
+<div class="hero-bg">
+<header class="hero wrap">
+  <span class="eyebrow" data-i18n="hero.eyebrow">✦ On-device AI · Built for macOS 26</span>
+  <h1 data-i18n="hero.h1">Your clipboard,<br>with a <span class="accent">brain</span>.</h1>
+  <p class="sub" data-i18n="hero.sub">Cortex remembers everything you copy — and actually understands it.
+  Summaries, intents and structure, powered by Apple Intelligence.
+  Entirely on your Mac. Entirely yours.</p>
+  <div class="cta-row" id="download">
+    <a class="btn big" href="#" data-i18n="hero.cta1">Download for macOS</a>
+    <a class="btn big ghost" href="#features" data-i18n="hero.cta2">See how it works</a>
+  </div>
+  <p class="fineprint" data-i18n="hero.fineprint">Free for early birds — core features are a lifetime purchase, never a subscription · macOS 26+ · Apple Silicon · No account, no cloud</p>
+  <div class="hero-shot">
+    <img src="assets/hero-main.png" alt="Cortex main window" width="1600" height="1006">
+  </div>
+</header>
+</div>
+
+<div class="keys-strip wrap">
+  <p data-i18n="keys.title">Keyboard-first, from the first keystroke</p>
+  <div class="keys">
+    <span data-i18n="keys.k1">Open picker</span><kbd>⌘⇧V</kbd>
+    <span data-i18n="keys.k2">Paste top hits</span><kbd>⌘1–9</kbd>
+    <span data-i18n="keys.k3">Run AI</span><kbd>⌘K</kbd>
+    <span data-i18n="keys.k4">File into a group</span><kbd>⌘⇧G</kbd>
+    <span data-i18n="keys.k5">Every shortcut</span><kbd>⌘?</kbd>
+  </div>
+</div>
+
+<section id="features">
+  <div class="wrap">
+    <div class="section-head">
+      <h2 data-i18n="feat.h2">Copy once. Find it forever.</h2>
+      <p data-i18n="feat.sub">Cortex quietly captures what you copy — and turns a flat history into an organized, searchable library.</p>
+    </div>
+    <div class="feature-grid">
+      <div class="card">
+        <div class="icon i-blue">⌘</div>
+        <h3 data-i18n="feat.c1h">Total recall</h3>
+        <p data-i18n="feat.c1p">Text, links, tables, images, files — everything lands in your history with its source app and timestamp. Duplicates get bumped, not duplicated.</p>
+      </div>
+      <div class="card">
+        <div class="icon i-purple">✦</div>
+        <h3 data-i18n="feat.c2h">AI that gets it</h3>
+        <p data-i18n="feat.c2p">Copied an invoice? Cortex extracts the fields. A rambling deal email? You get the stage, the numbers and the next step. On-device, in seconds.</p>
+      </div>
+      <div class="card">
+        <div class="icon i-green">⌗</div>
+        <h3 data-i18n="feat.c3h">Groups, not chaos</h3>
+        <p data-i18n="feat.c3p">File entries into nested groups like <em>Sales/Q1</em> with one hotkey. Your clipboard becomes a knowledge base instead of a junk drawer.</p>
+      </div>
+      <div class="card">
+        <div class="icon i-teal">👁</div>
+        <h3 data-i18n="feat.c4h">Reads images &amp; PDFs</h3>
+        <p data-i18n="feat.c4p">Built-in OCR turns screenshots into searchable text. PDFs and Word documents resolve to clean text automatically — scans included.</p>
+      </div>
+      <div class="card">
+        <div class="icon i-yellow">▤</div>
+        <h3 data-i18n="feat.c5h">Plain Markdown, forever</h3>
+        <p data-i18n="feat.c5p">Every entry is a human-readable Markdown file in a folder you choose. Sync it with iCloud, grep it, version it. No lock-in, ever.</p>
+      </div>
+      <div class="card">
+        <div class="icon i-red">⛭</div>
+        <h3 data-i18n="feat.c6h">Talks to Claude</h3>
+        <p data-i18n="feat.c6p">Cortex ships an MCP server: Claude Desktop and other AI tools can search, read and organize your clipboard library — with your permission.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="warm" id="picker">
+  <div class="wrap split">
+    <div>
+      <h2 data-i18n="pick.h2">Paste at the speed of thought.</h2>
+      <p class="lead" data-i18n="pick.lead">Hit <kbd>⌘⇧V</kbd> anywhere. Type three letters. Hit <kbd>⏎</kbd>. Done — the picker finds it, pastes it and gets out of your way.</p>
+      <ul class="ticks">
+        <li data-i18n="pick.t1"><strong>Fuzzy full-text search</strong> across content, titles, groups and AI summaries</li>
+        <li data-i18n="pick.t2"><strong>Arrow keys + Enter</strong> — the entry you pick jumps back to the top of your history</li>
+        <li data-i18n="pick.t3"><strong>⌘1–9</strong> pastes your most recent items instantly</li>
+        <li data-i18n="pick.t4"><strong>← →</strong> flips between raw content and the AI interpretation</li>
+        <li data-i18n="pick.t5"><strong>⌘?</strong> shows every shortcut, right inside the picker</li>
+      </ul>
+    </div>
+    <img src="assets/picker.png?v=2" alt="Cortex picker" width="960" height="544" loading="lazy">
+  </div>
+</section>
+
+<section id="ai">
+  <div class="wrap split flip">
+    <img src="assets/picker-help.png?v=2" alt="Shortcut overlay" width="960" height="544" loading="lazy">
+    <div>
+      <h2 data-i18n="kb.h2">Never leave the keyboard. Never read a manual.</h2>
+      <p class="lead" data-i18n="kb.lead">Cortex is designed hands-on-keys: global hotkeys for capturing, grouping and pasting — and a built-in cheat sheet so you never have to memorize them.</p>
+      <ul class="ticks">
+        <li data-i18n="kb.t1"><strong>⌘⇧G</strong> files your latest copy into a group — add <kbd>⌃</kbd> and the AI pipeline runs on it too</li>
+        <li data-i18n="kb.t2"><strong>⌘O</strong> jumps from the picker straight into the main window</li>
+        <li data-i18n="kb.t3"><strong>Direct paste</strong> optionally sends ⌘V into the app you came from</li>
+        <li data-i18n="kb.t4"><strong>Long content?</strong> Cortex splits it, processes every part and merges the result — no “content too long” dead ends</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section id="privacy">
+  <div class="wrap">
+    <div class="privacy">
+      <div>
+        <h2 data-i18n="priv.h2">Private by architecture, not by promise.</h2>
+        <p data-i18n="priv.p">Your clipboard is the most sensitive data stream on your Mac. Cortex treats it that way: there is no server, no account, no telemetry — because there’s simply no code for any of it.</p>
+        <p><a class="policy-link" href="privacy.html" data-i18n="priv.link">Read the full privacy policy →</a></p>
+      </div>
+      <ul class="ticks">
+        <li data-i18n="priv.t1"><strong>100% on-device AI</strong> — Apple Intelligence, no cloud round-trips</li>
+        <li data-i18n="priv.t2"><strong>Password managers are never captured</strong> — concealed content is respected, always</li>
+        <li data-i18n="priv.t3"><strong>Pause anytime</strong> — 15 minutes, an hour, or until you say so</li>
+        <li data-i18n="priv.t4"><strong>Your files, your folder</strong> — plain Markdown you can read, move and delete</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="warm" id="team">
+  <div class="wrap">
+    <div class="section-head">
+      <h2 data-i18n="team.h2">Built by real people. Answered by real people.</h2>
+      <p data-i18n="team.sub">No anonymous corporation, no support bots. Cortex is built in Paderborn by two people who use it every single day — and read every email themselves.</p>
+    </div>
+    <div class="team-grid">
+      <div class="person">
+        <img src="assets/daniel.jpg" alt="Daniel Pudelko">
+        <div>
+          <h3>Daniel Pudelko</h3>
+          <p class="role" data-i18n="team.d.role">Founder of Techmanufaktur · Product &amp; Ideas</p>
+          <p data-i18n="team.d.bio">Drives the product ideas behind Cortex — from the clipboard as a knowledge base to the AI pipeline. Believes your data belongs in files you own, not in someone else’s database.</p>
+          <a href="mailto:hello@techmanufaktur.de">hello@techmanufaktur.de</a>
+        </div>
+      </div>
+      <div class="person">
+        <img src="assets/clemens.jpg" alt="Clemens">
+        <div>
+          <h3>Clemens</h3>
+          <p class="role" data-i18n="team.c.role">Founder of Techmanufaktur · Implementation &amp; Engineering</p>
+          <p data-i18n="team.c.bio">Turns those ideas into code — from the capture engine to the on-device AI. Pushes every build to its limits before you ever see it.</p>
+          <a href="mailto:hello@techmanufaktur.de">hello@techmanufaktur.de</a>
+        </div>
+      </div>
+    </div>
+    <p class="team-note" data-i18n="team.note">“A clipboard manager sees everything you copy. You should know exactly who builds it — and be able to write to them.” — Daniel</p>
+  </div>
+</section>
+
+<section id="faq">
+  <div class="wrap faq-wrap">
+    <div class="section-head">
+      <h2 data-i18n="faq.h2">Questions, answered.</h2>
+    </div>
+    <details open>
+      <summary data-i18n="faq.q1">Does my clipboard data ever leave my Mac?</summary>
+      <p data-i18n="faq.a1">No. Capture, search, OCR and AI all run locally. The only network access Cortex has is fetching link previews when you copy a URL — and you can turn that off.</p>
+    </details>
+    <details>
+      <summary data-i18n="faq.q2">What does the AI actually do?</summary>
+      <p data-i18n="faq.a2">You define “intents” — situations like <em>Invoice</em> or <em>Deal Update</em> with a prompt each. When you run AI on an entry, Cortex detects the matching intent and applies your prompt: extract fields, summarize, translate, reformat. All with Apple’s on-device foundation model.</p>
+    </details>
+    <details>
+      <summary data-i18n="faq.q3">What are the system requirements?</summary>
+      <p data-i18n="faq.a3">macOS 26 or later on Apple Silicon. AI features require Apple Intelligence to be enabled; everything else works without it.</p>
+    </details>
+    <details>
+      <summary data-i18n="faq.q4">Where is my data stored?</summary>
+      <p data-i18n="faq.a4">As Markdown files (plus attachments) in a folder you control. Point it at iCloud Drive and your library syncs across Macs — no proprietary database involved.</p>
+    </details>
+    <details>
+      <summary data-i18n="faq.q5">How does the Claude / MCP integration work?</summary>
+      <p data-i18n="faq.a5">Cortex includes a small MCP server binary. Add one snippet to your Claude Desktop config, and Claude can list, search, read, create and organize entries in your library. It runs locally over stdio.</p>
+    </details>
+    <details>
+      <summary data-i18n="faq.q6">Is Cortex free?</summary>
+      <p data-i18n="faq.a6">Right now, yes: the early-bird release is 100% off. And here’s the promise — core functionality is a <strong>one-time lifetime purchase, never a subscription</strong>. What you get today stays yours. Much further down the road, a subscription may be offered for optional premium add-ons only.</p>
+    </details>
+  </div>
+</section>
+
+<div class="final wrap">
+  <h2 data-i18n="final.h2">Stop losing what you copy.</h2>
+  <p data-i18n="final.p">Cortex is the memory your Mac was missing.</p>
+  <a class="btn big" href="#download" data-i18n="final.cta">Download for macOS</a>
+</div>
+
+<footer>
+  <div class="wrap foot">
+    <span data-i18n="foot.made">© 2026 Techmanufaktur · Made in Paderborn 🇩🇪</span>
+    <span><a href="privacy.html" data-i18n="foot.privacy">Privacy</a> · <a href="#faq">FAQ</a> · <a href="mailto:hello@techmanufaktur.de" data-i18n="foot.contact">Contact</a></span>
+  </div>
+</footer>
+
+<script src="assets/i18n.js"></script>
+</body>
+</html>
