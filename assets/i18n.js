@@ -77,8 +77,8 @@
       "final.h2": "Hör auf zu verlieren, was du kopierst.",
       "final.p": "Cortex ist das Gedächtnis, das deinem Mac gefehlt hat.",
       "final.cta": "Für macOS laden",
-      "foot.made": "© 2026 Techmanufaktur · Gebaut in Paderborn 🇩🇪",
-      "foot.privacy": "Datenschutz", "foot.contact": "Kontakt"
+      "foot.made": "© 2026 Pudelko Beteiligungs GmbH · Techmanufaktur · Gebaut in Paderborn 🇩🇪",
+      "foot.imprint": "Impressum", "foot.privacy": "Datenschutz", "foot.contact": "Kontakt"
     },
 
     fr: {
@@ -149,8 +149,8 @@
       "final.h2": "Arrêtez de perdre ce que vous copiez.",
       "final.p": "Cortex est la mémoire qui manquait à votre Mac.",
       "final.cta": "Télécharger pour macOS",
-      "foot.made": "© 2026 Techmanufaktur · Conçu à Paderborn 🇩🇪",
-      "foot.privacy": "Confidentialité", "foot.contact": "Contact"
+      "foot.made": "© 2026 Pudelko Beteiligungs GmbH · Techmanufaktur · Conçu à Paderborn 🇩🇪",
+      "foot.imprint": "Mentions légales", "foot.privacy": "Confidentialité", "foot.contact": "Contact"
     },
 
     es: {
@@ -221,8 +221,8 @@
       "final.h2": "Deja de perder lo que copias.",
       "final.p": "Cortex es la memoria que le faltaba a tu Mac.",
       "final.cta": "Descargar para macOS",
-      "foot.made": "© 2026 Techmanufaktur · Hecho en Paderborno 🇩🇪",
-      "foot.privacy": "Privacidad", "foot.contact": "Contacto"
+      "foot.made": "© 2026 Pudelko Beteiligungs GmbH · Techmanufaktur · Hecho en Paderborno 🇩🇪",
+      "foot.imprint": "Aviso legal", "foot.privacy": "Privacidad", "foot.contact": "Contacto"
     },
 
     it: {
@@ -293,8 +293,8 @@
       "final.h2": "Smetti di perdere ciò che copi.",
       "final.p": "Cortex è la memoria che mancava al tuo Mac.",
       "final.cta": "Scarica per macOS",
-      "foot.made": "© 2026 Techmanufaktur · Fatto a Paderborn 🇩🇪",
-      "foot.privacy": "Privacy", "foot.contact": "Contatti"
+      "foot.made": "© 2026 Pudelko Beteiligungs GmbH · Techmanufaktur · Fatto a Paderborn 🇩🇪",
+      "foot.imprint": "Note legali", "foot.privacy": "Privacy", "foot.contact": "Contatti"
     },
 
     nl: {
@@ -365,8 +365,8 @@
       "final.h2": "Stop met verliezen wat je kopieert.",
       "final.p": "Cortex is het geheugen dat je Mac miste.",
       "final.cta": "Downloaden voor macOS",
-      "foot.made": "© 2026 Techmanufaktur · Gemaakt in Paderborn 🇩🇪",
-      "foot.privacy": "Privacy", "foot.contact": "Contact"
+      "foot.made": "© 2026 Pudelko Beteiligungs GmbH · Techmanufaktur · Gemaakt in Paderborn 🇩🇪",
+      "foot.imprint": "Colofon", "foot.privacy": "Privacy", "foot.contact": "Contact"
     }
   };
 
